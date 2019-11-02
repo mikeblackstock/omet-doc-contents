@@ -1,13 +1,14 @@
 {
   "type": "application",
-  "name": "MyApplication",
-  "category": "development",
+  "name": "omet-toc",
+  "category": "rojects",
   "server": null,
+  "icon": "icon.png", 
   "title": {
-    "en_EN": "MyApplication"
+    "en_EN": "Documentation"
   },
   "description": {
-    "en_EN": "MyApplication"
+    "en_EN": "Documentation"
   },
   "files": [
     "main.js"

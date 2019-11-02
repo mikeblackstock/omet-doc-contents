@@ -13,8 +13,8 @@ const register = (core, args, options, metadata) => {
   	},
  
     title: metadata.title.en_EN,
-    dimension: {width: 400, height:400},
-    position: 'center'
+    dimension: {width: 300, height:400},
+    position: 'left'
   })
   .on('destroy', () => proc.destroy())
   .render(($content, win) => {
@@ -38,7 +38,8 @@ const register = (core, args, options, metadata) => {
     // Listen for messages from iframe
     // and send to server via websocket
     win.on('iframe:get', msg => {
-      proc.send(msg);
+        core.run('DocViewer', msg);
+//      proc.send(msg);
     });
 
     $content.appendChild(iframe);

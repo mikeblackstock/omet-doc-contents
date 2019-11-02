@@ -1,10 +1,316 @@
 <!DOCTYPE html>
 <html>
-  <body>
-    <h2>OMET Boilerplate</h2>
-    <a href="javascript:sendMessage('ping')">Click me</a>    
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+<style>
+
+
+
+
+.treeview ul{ /*CSS for Simple Tree Menu*/
+
+margin: 0;
+
+padding: 0;
+
+
+
+}
+
+
+
+.treeview li{ /*Style for LI elements in general (excludes an LI that contains sub lists)*/
+
+background: white url(images/list.gif) no-repeat left center;
+
+list-style-type: none;
+
+padding-left: 26px;
+
+margin-bottom: 3px;
+
+vertical-align: bottom;
+
+
+}
+
+
+
+.treeview li.submenu{ /* Style for LI that contains sub lists (other ULs). */
+
+background: white url(images/closed.gif) no-repeat left 1px;
+
+cursor: hand !important;
+
+cursor: pointer !important;
+
+vertical-align: bottom;
+
+}
+
+
+
+
+
+.treeview li.submenu ul{ /*Style for ULs that are children of LIs (submenu) */
+
+display: none; /*Hide them by default. Don't delete. */
+
+vertical-align: bottom;
+
+}
+
+
+
+.treeview .submenu ul li{ /*Style for LIs of ULs that are children of LIs (submenu) */
+
+cursor: default;
+
+vertical-align: bottom;
+
+}
+
+
+
+.treeview a {
+
+color: #000;
+
+text-decoration: none;
+
+}
+
+
+</style>
+<script>
+function getDocPage(param) {
+    sendMessage(param);
+}
+function createWindow() {
+    sendMessage("createWindow");
+}
+</script>
+</head>
+  <body style="font-style: Arial; font-size: 13px">
+    <h2>Tutorial</h2>
+<!--
+  <b>New search</b><br>
+<form id='docSearchForm'  name='docsSearchForm' action='javascript:searchDocs();'>
+<input  style='width:80%' type='text' dojoType='dijit.form.TextBox' id='searchQuery' name='searchQuery' value="">
+
+
+
+
+<button type="button" onClick="searchDocs();"
+	
+>
+Go
+</button>
+</form>
+
+<button type="button" onClick="formatTOC();">Format</button></br>
+<div id="tutorialTree" style="width: 110%;position:absolute; left: -30px">
+-->
+<button type="button" onClick="createWindow();">Create</button></br>
+<ul>
+
+<li><a name='toc-Tutorial-1' href='javascript: getDocPage("learning/tutorial.html")'>1. Tutorial</a></li></br>
+
+
+<!-- nochange -->
+<li><a name='toc-How-to-write-input-files-1' href='javascript: getDocPage("learning/how-to-write-input-files.html")'>1.2 How to write input files</a></li></br>
+
+<li><a name='toc-Simple-notation-1' href='javascript: getDocPage("learning/simple-notation.html")'>1.2.1 Simple notation</a></li></br>
+
+<li><a name='toc-Working-on-input-files-1' href='javascript: getDocPage("learning/working-on-input-files.html")'>1.2.2 Working on input files</a></li></br>
+
+
+<!-- nochange -->
+<li><a name='toc-Dealing-with-errors-1' href='javascript: getDocPage("learning/dealing-with-errors.html")'>1.3 Dealing with errors</a></li></br>
+
+<li><a name='toc-General-troubleshooting-tips-1' href='javascript: getDocPage("learning/general-troubleshooting-tips.html")'>1.3.1 General troubleshooting tips</a></li></br>
+
+<li><a name='toc-Some-common-errors-1' href='javascript: getDocPage("learning/some-common-errors.html")'>1.3.2 Some common errors</a></li></br>
+
+
+<!-- nochange -->
+<li><a name='toc-How-to-read-the-manuals-1' href='javascript: getDocPage("learning/how-to-read-the-manuals.html")'>1.4 How to read the manuals</a></li></br>
+
+<li><a name='toc-Omitted-material-1' href='javascript: getDocPage("learning/omitted-material.html")'>1.4.1 Omitted material</a></li></br>
+
+<li><a name='toc-Clickable-examples-1' href='javascript: getDocPage("learning/clickable-examples.html")'>1.4.2 Clickable examples</a></li></br>
+
+<li><a name='toc-Overview-of-manuals-1' href='javascript: getDocPage("learning/overview-of-manuals.html")'>1.4.3 Overview of manuals</a></li></br>
+
+<li><a name='toc-Working-online' href='javascript: getDocPage("learning/working-online.html")'>1.4.5 Working online</a></li></br>
+
+
+</ul>
+​
+ 
+
+
+
+</div>
+
+
     <script>
       // Global function to send a message to OS.js Application
+
+var persisteduls=new Object();
+var ddtreemenu=new Object();
+
+ddtreemenu.closefolder="./closed.gif"; //set image path to "closed" folder image
+ddtreemenu.openfolder="./open.gif"; //set image path to "open" folder image
+
+//////////No need to edit beyond here///////////////////////////
+
+ddtreemenu.createTree=function(treeid, enablepersist, persistdays){
+var ultags=document.getElementById(treeid).getElementsByTagName("ul");
+if (typeof persisteduls[treeid]=="undefined")
+persisteduls[treeid]=(enablepersist==true && ddtreemenu.getCookie(treeid)!="")? ddtreemenu.getCookie(treeid).split(",") : ""
+for (var i=0; i<ultags.length; i++)
+ddtreemenu.buildSubTree(treeid, ultags[i], i)
+if (enablepersist==true){ //if enable persist feature
+var durationdays=(typeof persistdays=="undefined")? 1 : parseInt(persistdays)
+ddtreemenu.dotask(window, function(){ddtreemenu.rememberstate(treeid, durationdays)}, "unload") //save opened UL indexes on body unload
+}
+}
+
+ddtreemenu.buildSubTree=function(treeid, ulelement, index){
+ulelement.parentNode.className="submenu"
+if (typeof persisteduls[treeid]=="object"){ //if cookie exists (persisteduls[treeid] is an array versus "" string)
+if (ddtreemenu.searcharray(persisteduls[treeid], index)){
+ulelement.setAttribute("rel", "open")
+ulelement.style.display="block"
+ulelement.parentNode.style.backgroundImage="url("+ddtreemenu.openfolder+")"
+}
+else
+ulelement.setAttribute("rel", "closed")
+} //end cookie persist code
+else if (ulelement.getAttribute("rel")==null || ulelement.getAttribute("rel")==false) //if no cookie and UL has NO rel attribute explicted added by user
+ulelement.setAttribute("rel", "closed")
+else if (ulelement.getAttribute("rel")=="open") //else if no cookie and this UL has an explicit rel value of "open"
+ddtreemenu.expandSubTree(treeid, ulelement) //expand this UL plus all parent ULs (so the most inner UL is revealed!)
+ulelement.parentNode.onclick=function(e){
+var submenu=this.getElementsByTagName("ul")[0]
+if (submenu.getAttribute("rel")=="closed"){
+submenu.style.display="block"
+submenu.setAttribute("rel", "open")
+ulelement.parentNode.style.backgroundImage="url("+ddtreemenu.openfolder+")"
+}
+else if (submenu.getAttribute("rel")=="open"){
+submenu.style.display="none"
+submenu.setAttribute("rel", "closed")
+ulelement.parentNode.style.backgroundImage="url("+ddtreemenu.closefolder+")"
+}
+ddtreemenu.preventpropagate(e)
+}
+ulelement.onclick=function(e){
+ddtreemenu.preventpropagate(e)
+}
+}
+
+ddtreemenu.expandSubTree=function(treeid, ulelement){ //expand a UL element and any of its parent ULs
+var rootnode=document.getElementById(treeid)
+var currentnode=ulelement
+currentnode.style.display="block"
+currentnode.parentNode.style.backgroundImage="url("+ddtreemenu.openfolder+")"
+while (currentnode!=rootnode){
+if (currentnode.tagName=="UL"){ //if parent node is a UL, expand it too
+currentnode.style.display="block"
+currentnode.setAttribute("rel", "open") //indicate it's open
+currentnode.parentNode.style.backgroundImage="url("+ddtreemenu.openfolder+")"
+}
+currentnode=currentnode.parentNode
+}
+}
+
+ddtreemenu.flatten=function(treeid, action){ //expand or contract all UL elements
+var ultags=document.getElementById(treeid).getElementsByTagName("ul")
+for (var i=0; i<ultags.length; i++){
+ultags[i].style.display=(action=="expand")? "block" : "none"
+var relvalue=(action=="expand")? "open" : "closed"
+ultags[i].setAttribute("rel", relvalue)
+ultags[i].parentNode.style.backgroundImage=(action=="expand")? "url("+ddtreemenu.openfolder+")" : "url("+ddtreemenu.closefolder+")"
+}
+}
+
+ddtreemenu.rememberstate=function(treeid, durationdays){ //store index of opened ULs relative to other ULs in Tree into cookie
+var ultags=document.getElementById(treeid).getElementsByTagName("ul")
+var openuls=new Array()
+for (var i=0; i<ultags.length; i++){
+if (ultags[i].getAttribute("rel")=="open")
+openuls[openuls.length]=i //save the index of the opened UL (relative to the entire list of ULs) as an array element
+}
+if (openuls.length==0) //if there are no opened ULs to save/persist
+openuls[0]="none open" //set array value to string to simply indicate all ULs should persist with state being closed
+ddtreemenu.setCookie(treeid, openuls.join(","), durationdays) //populate cookie with value treeid=1,2,3 etc (where 1,2... are the indexes of the opened ULs)
+}
+
+////A few utility functions below//////////////////////
+
+ddtreemenu.getCookie=function(Name){ //get cookie value
+var re=new RegExp(Name+"=[^;]+", "i"); //construct RE to search for target name/value pair
+if (document.cookie.match(re)) //if cookie found
+return document.cookie.match(re)[0].split("=")[1] //return its value
+return ""
+}
+
+ddtreemenu.setCookie=function(name, value, days){ //set cookei value
+var expireDate = new Date()
+//set "expstring" to either future or past date, to set or delete cookie, respectively
+var expstring=expireDate.setDate(expireDate.getDate()+parseInt(days))
+document.cookie = name+"="+value+"; expires="+expireDate.toGMTString()+"; path=/";
+}
+
+ddtreemenu.searcharray=function(thearray, value){ //searches an array for the entered value. If found, delete value from array
+var isfound=false
+for (var i=0; i<thearray.length; i++){
+if (thearray[i]==value){
+isfound=true
+thearray.shift() //delete this element from array for efficiency sake
+break
+}
+}
+return isfound
+}
+
+ddtreemenu.preventpropagate=function(e){ //prevent action from bubbling upwards
+if (typeof e!="undefined")
+e.stopPropagation()
+else
+event.cancelBubble=true
+}
+
+ddtreemenu.dotask=function(target, functionref, tasktype){ //assign a function to execute to an event handler (ie: onunload)
+var tasktype=(window.addEventListener)? tasktype : "on"+tasktype
+if (target.addEventListener)
+target.addEventListener(tasktype, functionref, false)
+else if (target.attachEvent)
+target.attachEvent(tasktype, functionref)
+}
+
+
+function formatTOC() {
+		ddtreemenu.createTree("web", false);
+		ddtreemenu.createTree("learning", false);
+			var sections= ["web", "learning", "essay", "notation", "snippets"];
+
+				for (var i=0; i < sections.length; i++) {
+
+					query("#" + sections[i] + " a").forEach(function(node, index, arr){
+
+ 					if(domClass.contains(node, "nochange") == false){
+ 						var sn= node.href.split("/");
+ 						newHref= sn[sn.length-1];
+ 						node.href= "javascript: getDocPage('" + sections[i] + "/" + newHref + "');"; 
+					}
+
+ 				});
+			}	
+}
+
       function sendMessage() {
         top.postMessage({
           name: 'osjs/iframe:message',
