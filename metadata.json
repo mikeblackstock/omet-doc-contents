@@ -1,9 +1,10 @@
 {
   "type": "application",
   "name": "omet-toc",
-  "category": "rojects",
+  "category": "projects",
   "server": null,
-  "icon": "icon.png", 
+  "icon": "icon.png",
+  "singleton": true, 
   "title": {
     "en_EN": "Documentation"
   },
