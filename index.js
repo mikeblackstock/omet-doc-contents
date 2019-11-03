@@ -38,6 +38,7 @@ const register = (core, args, options, metadata) => {
     // Listen for messages from iframe
     // and send to server via websocket
     win.on('iframe:get', msg => {
+
         core.run('DocViewer', msg);
 //      proc.send(msg);
     });
